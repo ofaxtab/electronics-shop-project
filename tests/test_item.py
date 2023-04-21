@@ -27,3 +27,25 @@ def test_apply_discount():
     assert instance.price == 7000
 
 
+def test_repr():
+    item = Item('Смартфон', 900, 5)
+    assert repr(item) == 'Item(name=Смартфон, price=900, quantity=5)'
+
+
+def test_name_setter_error():
+    with pytest.raises(ValueError) as err:
+        Item('СуперСмартфон', 900, 5)
+    assert 'Имя товара не может быть длиннее 10 символов' == err.value.args[0]
+
+
+def test_instantiate_from_csv():
+    Item.all = []
+    Item.instantiate_from_csv()
+    assert len(Item.all) == 5
+
+
+def test_string_to_number():
+    assert Item.string_to_number('5') == 5
+    assert Item.string_to_number('5.0') == 5
+    assert Item.string_to_number('5.5') == 5
+

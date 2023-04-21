@@ -1,3 +1,6 @@
+import csv
+import os
+
 class Item:
     """
     Класс для представления товара в магазине.
@@ -17,6 +20,31 @@ class Item:
         self.price = price
         self.quantity = quantity
         Item.all.append(self)
+
+    def __repr__(self):
+        return f'Item(name={self.name}, price={self.price}, quantity={self.quantity})'
+
+    @property
+    def name(self):
+        return self.__name
+
+    @name.setter
+    def name(self, value: str):
+        if len(value) > 10:
+            raise ValueError('Имя товара не может быть длиннее 10 символов')
+        self.__name: str = value
+
+    @classmethod
+    def instantiate_from_csv(cls):
+        print(os.path.join('..', 'src', 'items.csv'))
+        with open(os.path.join('..', 'src', 'items.csv'), 'r', newline='') as csvfile:
+            data = csv.DictReader(csvfile)
+            for row in data:
+                cls(row['name'], row['price'], row['quantity'])
+
+    @staticmethod
+    def string_to_number(number: str) -> int:
+        return int(float(number))
 
     def calculate_total_price(self) -> float:
         """
