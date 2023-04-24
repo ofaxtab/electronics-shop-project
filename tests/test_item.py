@@ -29,7 +29,11 @@ def test_apply_discount():
 
 def test_repr():
     item = Item('Смартфон', 900, 5)
-    assert repr(item) == 'Item(name=Смартфон, price=900, quantity=5)'
+    assert repr(item) == "Item('Смартфон', 900, 5)"
+
+def test_str():
+    item = Item('Смартфон', 900, 5)
+    assert str(item) == 'Смартфон'
 
 
 def test_name_setter_error():
