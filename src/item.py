@@ -22,10 +22,15 @@ class Item:
         Item.all.append(self)
 
     def __repr__(self):
-        return f"Item('{self.name}', {self.price}, {self.quantity})"
+        return f"{self.__class__.__name__}('{self.name}', {self.price}, {self.quantity})"
 
     def __str__(self):
         return f"{self.name}"
+
+    def __add__(self, other):
+        if not issubclass(other.__class__, self.__class__):
+            raise TypeError(f'Невозможно произвести сложение с объектом {other} класса {other.__class__}.')
+        return self.quantity + other.quantity
 
     @property
     def name(self):
