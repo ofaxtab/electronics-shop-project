@@ -53,3 +53,9 @@ def test_string_to_number():
     assert Item.string_to_number('5.0') == 5
     assert Item.string_to_number('5.5') == 5
 
+def test_add_raises():
+    item = Item('Смартфон', 900, 5)
+    with pytest.raises(TypeError) as err:
+        item + 9
+    assert err.value.args[0] == "Невозможно произвести сложение с объектом 9 класса <class 'int'>."
+
