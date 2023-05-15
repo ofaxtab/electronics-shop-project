@@ -1,12 +1,17 @@
 import csv
 import os
 
+from src.exceptions import InstantiateCSVError
+
 class Item:
     """
     Класс для представления товара в магазине.
     """
     pay_rate = 1.0
     all = []
+    _csv_filename = 'items.csv'
+    _csv_file_directory = os.path.join(f'..', 'src')
+
 
     def __init__(self, name: str, price: float, quantity: int) -> None:
         """
@@ -20,6 +25,8 @@ class Item:
         self.price = price
         self.quantity = quantity
         Item.all.append(self)
+
+
 
     def __repr__(self):
         return f"{self.__class__.__name__}('{self.name}', {self.price}, {self.quantity})"
@@ -44,11 +51,18 @@ class Item:
 
     @classmethod
     def instantiate_from_csv(cls):
-        print(os.path.join('..', 'src', 'items.csv'))
-        with open(os.path.join('..', 'src', 'items.csv'), 'r', newline='') as csvfile:
-            data = csv.DictReader(csvfile)
-            for row in data:
-                cls(row['name'], row['price'], row['quantity'])
+        try:
+            with open(os.path.join(cls._csv_file_directory, cls._csv_filename),
+                      'r', newline='') as csvfile:
+                try:
+                    data = csv.DictReader(csvfile)
+                    for row in data:
+                        cls(row['name'], row['price'], row['quantity'])
+                except Exception:
+                    raise InstantiateCSVError(f'Файл {cls._csv_filename} поврежден')
+
+        except FileNotFoundError:
+            raise FileNotFoundError(f'Отсутствует файл {cls._csv_filename}')
 
     @staticmethod
     def string_to_number(number: str) -> int:

@@ -1,7 +1,10 @@
 """Здесь надо написать тесты с использованием pytest для модуля item."""
+import os
+
 import pytest
 
 from src.item import Item
+from src.exceptions import InstantiateCSVError
 
 
 def test_item_creation():
@@ -31,6 +34,7 @@ def test_repr():
     item = Item('Смартфон', 900, 5)
     assert repr(item) == "Item('Смартфон', 900, 5)"
 
+
 def test_str():
     item = Item('Смартфон', 900, 5)
     assert str(item) == 'Смартфон'
@@ -47,15 +51,26 @@ def test_instantiate_from_csv():
     Item.instantiate_from_csv()
     assert len(Item.all) == 5
 
+    with pytest.raises(FileNotFoundError) as err:
+        Item._csv_filename = 'file-is-not-exists.csv'
+        Item.instantiate_from_csv()
+    assert err.value.args[0] == 'Отсутствует файл file-is-not-exists.csv'
+
+    with pytest.raises(InstantiateCSVError) as err:
+        Item._csv_filename = 'broken-file.csv'
+        Item._csv_file_directory = os.path.join('..', 'tests', 'testfiles')
+        Item.instantiate_from_csv()
+    assert err.value.args[0] == 'Файл broken-file.csv поврежден'
+
 
 def test_string_to_number():
     assert Item.string_to_number('5') == 5
     assert Item.string_to_number('5.0') == 5
     assert Item.string_to_number('5.5') == 5
 
+
 def test_add_raises():
     item = Item('Смартфон', 900, 5)
     with pytest.raises(TypeError) as err:
         item + 9
     assert err.value.args[0] == "Невозможно произвести сложение с объектом 9 класса <class 'int'>."
-
